@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: taskdb
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data_jude:/var/lib/mysql
+
+  laravel:
+    build: ./task-backend
+    ports:
+      - "8001:80"
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: taskdb
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+  react:
+    build: ./task-frontend
+    ports:
+      - "3001:3000"
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+volumes:
+  mysql_data_jude:
